@@ -26,6 +26,8 @@ steps:
       from_secret: forward_ip
     FORWARDING_DOMAIN: 
       from_secret: forward_domain
+    FORWARDING_REVERSE:
+      from_secret: forward_reverse
   when:
     event:
     - push
