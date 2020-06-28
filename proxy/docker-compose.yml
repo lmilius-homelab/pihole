@@ -1,0 +1,58 @@
+version: '2.2'
+services:
+  traefik:
+    image: traefik:v2.2
+    labels:
+    - "traefik.enable=true"
+    - "traefik.http.routers.traefik.entrypoints=websecure"
+    - "traefik.http.routers.traefik.rule=Host(`proxy.lukemilius.com`)"
+    - "traefik.http.routers.traefik.tls=true"
+    - "traefik.http.routers.traefik.tls.certresolver=cloudflare"
+    - "traefik.http.routers.traefik.tls.domains[0].main=lukemilius.com"
+    - "traefik.http.routers.traefik.tls.domains[0].sans=*.lukemilius.com"
+    - "traefik.http.routers.traefik.service=api@internal"
+    - "traefik.http.routers.traefik.middlewares=tfa_verify@file"
+    ports:
+    - 80:80
+    - 443:443
+    - 2003:2003
+    - 3306:3306
+    volumes:
+    - /var/run/docker.sock:/var/run/docker.sock:ro
+    - ./traefik.yaml:/etc/traefik/traefik.yaml
+    - letsencrypt:/letsencrypt
+    networks:
+    - proxy
+    restart: unless-stopped
+    environment:
+      CF_API_EMAIL: ${CF_API_EMAIL}
+      CF_API_KEY: ${CF_API_KEY}
+
+  forward-auth:
+    image: thomseddon/traefik-forward-auth:2
+    networks:
+    - proxy
+    expose:
+    - 4181
+    restart: unless-stopped
+    labels:
+    - "traefik.enable=true"
+    - "traefik.http.routers.forward-auth.entrypoints=websecure"
+    - "traefik.http.routers.forward-auth.rule=Host(`auth.lukemilius.com`)"
+    - "traefik.http.routers.forward-auth.tls=true"
+    - "traefik.http.routers.forward-auth.middlewares=tfa_verify@file"
+    environment:
+      COOKIE_DOMAIN: lukemilius.com
+      AUTH_HOST: auth.lukemilius.com
+      WHITELIST: ${WHITELIST} # Whitelisted email addresses
+      SECRET: ${COOKIE_SECRET}
+      PROVIDERS_GOOGLE_CLIENT_ID: ${PROVIDERS_GOOGLE_CLIENT_ID}
+      PROVIDERS_GOOGLE_CLIENT_SECRET: ${PROVIDERS_GOOGLE_CLIENT_SECRET}
+#      LOG_LEVEL: debug
+
+networks:
+  proxy:
+    external: true
+
+volumes:
+  letsencrypt:

@@ -1,0 +1,112 @@
+api:
+  dashboard: true
+
+log:
+  level: INFO
+#  level: DEBUG
+
+providers:
+  file:
+    filename: /etc/traefik/traefik.yaml
+    watch: true
+  docker:
+    exposedByDefault: false
+
+serversTransport:
+  insecureSkipVerify: true
+
+metrics:
+  influxDB:
+    address: influxdb.lukemilius.com
+    protocol: http
+    database: influxdb
+
+entrypoints:
+  web:
+    address: ":80"
+  websecure:
+    address: ":443"
+  graphite:
+    address: ":2003"
+  mysql:
+    address: ":3306"
+
+
+certificatesResolvers:
+  cloudflare:
+    acme:
+      dnschallenge:
+        provider: cloudflare
+        resolvers:
+        - "1.1.1.1:53"
+      # When doing testing, uncomment the below line to prevent hitting LetsEncrypt limits
+      #caserver: https://acme-staging-v02.api.letsencrypt.org/directory
+      email: info@lukemilius.com
+      storage: /letsencrypt/acme.json
+
+
+# http to https redirection
+http:
+  routers:
+    http_catchall:
+      entryPoints:
+        - web
+      middlewares:
+        - https_redirect
+      rule: "HostRegexp(`{any:.+}`)"
+      service: noop@internal
+    controller:
+      entryPoints:
+        - websecure
+      middlewares:
+        - tfa_verify@file
+      rule: "Host(`controller.lukemilius.com`)"
+      tls: {}
+      service: controller
+    octopi:
+      entryPoints:
+      - websecure
+      middlewares:
+      - tfa_verify@file
+      rule: "Host(`octopi.lukemilius.com`)"
+      tls: {}
+      service: octopi
+    homeassistant:
+      entryPoints:
+      - websecure
+      middlewares:
+      - tfa_verify@file
+      rule: "Host(`ha.lukemilius.com`)"
+      tls: {}
+      service: homeassistant
+
+  services:
+    controller:
+      loadBalancer:
+        servers:
+        - url: "https://unifi.lukemilius.com:8443"
+    octopi:
+      loadBalancer:
+        servers:
+        - url: "http://octopi.milius.home"
+    homeassistant:
+      loadBalancer:
+        servers:
+        - url: "http://homeassistant.milius.home:8123"
+
+  middlewares:
+    https_redirect:
+      redirectScheme:
+        scheme: https
+        permanent: true
+    tfa_verify:
+      forwardAuth:
+        address: "http://forward-auth:4181"
+        trustForwardHeader: true
+        authResponseHeaders: 
+        - X-Forwarded-User
+    internal_only:
+      ipWhiteList:
+        sourceRange:
+          - "10.0.0.0/8"
+          - "172.16.0.0/12"
