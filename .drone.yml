@@ -14,7 +14,7 @@ steps:
   image: docker/compose
   commands:
   - cd pihole
-  - docker-compose up -d
+  - docker-compose up -d --force-recreate
   volumes:
   - name: dockersock
     path: /var/run/docker.sock
