@@ -20,6 +20,7 @@ services:
       CONDITIONAL_FORWARDING_IP: ${FORWARDING_IP}
       CONDITIONAL_FORWARDING_DOMAIN: ${FORWARDING_DOMAIN}
       ServerIP: '10.10.200.6'
+      VIRTUAL_HOST: 'pihole'
     dns:
     - 127.0.0.1
     - 1.1.1.1
