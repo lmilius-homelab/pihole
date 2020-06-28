@@ -35,7 +35,14 @@ services:
 
 networks:
   lan_net:
-    external: true
+    driver: macvlan
+    driver_opts:
+      parent: eno1
+    ipam:
+      config:
+        subnet: '10.10.200.4/24'
+        gateway: '10.10.200.1'
+        ip-range: '10.10.200.4/30'
 
 volumes:
   etc:
