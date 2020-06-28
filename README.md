@@ -16,3 +16,4 @@ You will need to fill in the values for the secrets. Finally, run the following 
 docker network create -d macvlan --subnet=10.10.200.4/24 --gateway=10.10.200.1 --ip-range=10.10.200.4/29 -o parent=eno1 lan_net
 docker-compose up -d
 ```
+
