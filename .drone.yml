@@ -20,10 +20,11 @@ steps:
     path: /var/run/docker.sock
   environment:
     WEBPASSWORD:
-      from-secret: admin_password
+      from_secret: admin_password
     FORWARDING_IP:
-      from-secret: forward_ip
-    FORWARDING_DOMAIN: forward_domain
+      from_secret: forward_ip
+    FORWARDING_DOMAIN: 
+      from_secret: forward_domain
   when:
     event:
     - push
