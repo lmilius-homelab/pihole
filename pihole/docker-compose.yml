@@ -19,14 +19,14 @@ services:
       CONDITIONAL_FORWARDING: 'True'
       CONDITIONAL_FORWARDING_IP: ${FORWARDING_IP}
       CONDITIONAL_FORWARDING_DOMAIN: ${FORWARDING_DOMAIN}
-      ServerIP: '10.10.200.6'
+      ServerIP: '10.10.200.5'
       VIRTUAL_HOST: 'pihole'
     dns:
     - 127.0.0.1
     - 1.1.1.1
     networks:
       lan_net:
-        ipv4_address: '10.10.200.6'
+        ipv4_address: '10.10.200.5'
     cap_add:
     - NET_ADMIN
     restart: unless-stopped
