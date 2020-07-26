@@ -38,7 +38,7 @@ networks:
   lan_net:
     driver: macvlan
     driver_opts:
-      parent: eno1
+      parent: eno2
     ipam:
       config:
         - subnet: '10.10.200.1/24'
