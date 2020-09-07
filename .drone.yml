@@ -12,6 +12,7 @@ trigger:
 steps:
 - name: Deploy
   image: docker/compose
+  host: tcp://10.10.200.5:2376
   commands:
   - cd pihole
   - docker-compose up -d
