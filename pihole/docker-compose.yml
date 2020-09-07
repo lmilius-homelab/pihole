@@ -26,8 +26,7 @@ services:
       ServerIP: '10.10.200.5'
     dns:
     - 127.0.0.1
-    networks:
-      host:
+    network_mode: "host"
     cap_add:
     - NET_ADMIN
     restart: unless-stopped
