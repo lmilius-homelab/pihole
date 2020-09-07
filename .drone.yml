@@ -15,7 +15,7 @@ steps:
   host: tcp://10.10.200.5:2376
   commands:
   - cd pihole
-  - docker-compose up -d
+  - docker-compose down
   volumes:
   - name: dockersock
     path: /var/run/docker.sock
