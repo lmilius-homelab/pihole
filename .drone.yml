@@ -12,14 +12,14 @@ trigger:
 steps:
 - name: Deploy
   image: docker/compose
-  host: tcp://10.10.200.5:2376
   commands:
   - cd pihole
-  - docker-compose down
-  volumes:
-  - name: dockersock
-    path: /var/run/docker.sock
+  - docker-compose up -d
+#   volumes:
+#   - name: dockersock
+#     path: /var/run/docker.sock
   environment:
+    DOCKER_HOST: "tcp://10.10.200.5:2376"
     WEBPASSWORD:
       from_secret: admin_password
     FORWARDING_IP:
