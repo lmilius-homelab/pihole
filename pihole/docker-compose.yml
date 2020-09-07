@@ -4,12 +4,12 @@ services:
     image: pihole/pihole:latest
     hostname: pihole
     domainname: ${FORWARDING_DOMAIN}
-    ports:
-    - "53:53/tcp"
-    - "53:53/udp"
-    - "67:67/udp"
-    - "443:443/tcp"
-    - "80:80/tcp"
+#     ports:
+#     - "53:53/tcp"
+#     - "53:53/udp"
+#     - "67:67/udp"
+#     - "443:443/tcp"
+#     - "80:80/tcp"
     volumes:
     - etc:/etc/pihole/
     - dnsmasq:/etc/dnsmasq.d/
@@ -27,20 +27,19 @@ services:
     dns:
     - 127.0.0.1
     networks:
-      lan_net:
-        ipv4_address: '10.10.200.5'
+      host:
     cap_add:
     - NET_ADMIN
     restart: unless-stopped
 
-networks:
-  lan_net:
-    driver: macvlan
-    driver_opts:
-      parent: eno2
-    ipam:
-      config:
-        - subnet: '10.10.200.1/24'
+# networks:
+#   lan_net:
+#     driver: macvlan
+#     driver_opts:
+#       parent: eno2
+#     ipam:
+#       config:
+#         - subnet: '10.10.200.1/24'
 
 volumes:
   etc:
